@@ -1,0 +1,190 @@
+{{ block title }}
+<div style="text-align: center;">
+    <h4>Practice round {{ player.round_number }} out of 5</h4>
+
+    <h4>Please choose a state that you believe is the unknown state in this round </h4>
+</div>
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .content {
+        font-size: 20px;
+        margin-left: 30px;
+    }
+    .submit-button {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        outline: none;
+        border-radius: 8px;
+        position: relative;
+        left: -20px;
+    }
+    .submit-button.disabled {
+        background-color: grey;
+        cursor: not-allowed;
+    }
+    .blue {
+        color: blue;
+    }
+    table {
+        width: 120%;
+        border-collapse: collapse;
+        font-size: 0.8em;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 6px;
+        text-align: center;
+    }
+    .player-id {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .top-section {
+        display: flex;
+        margin-top: -20px;
+    }
+     .left-section {
+        font-size: 20px;
+        flex: 1.7;
+        margin-left: 0px;
+        margin-right: 200px;
+    }
+    .middle-section {
+        flex: 1.2;
+        margin-right: 30px;
+        margin-top: 30px;
+    }
+    .right-section {
+        flex: 1;
+        margin-right: -100px;
+    }
+    .next-button-container {
+        text-align: right;
+        margin-right: -10px;
+    }
+</style>
+
+<input type="hidden" name="timeSpent2" id="timeSpent2"/>
+<script>
+var pageTimeElapsed = 0;
+var pageTimerID = -1;
+var timerFinished = false;
+var selectionMade = false;
+
+function pageTick() {
+  pageTimeElapsed++;
+  document.getElementById("timeSpent2").value = pageTimeElapsed;
+  if (pageTimeElapsed >= 5) {
+    timerFinished = true;
+    updateSubmitButton();
+  }
+}
+
+window.onload = function() {
+  if (pageTimerID == -1) {
+    pageTimerID = setInterval(pageTick, 1000);
+  }
+};
+
+function updateSubmitButton() {
+    var radios = document.querySelectorAll('input[name="vote"]');
+    var button = document.querySelector('.submit-button');
+    selectionMade = false;
+
+    radios.forEach(function(radio) {
+        if (radio.checked) {
+            selectionMade = true;
+        }
+    });
+
+    if (selectionMade && timerFinished) {
+        button.classList.remove('disabled');
+        button.disabled = false;
+    } else {
+        button.classList.add('disabled');
+        button.disabled = true;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var radios = document.querySelectorAll('input[name="vote"]');
+    var button = document.querySelector('.submit-button');
+
+    button.classList.add('disabled');
+    button.disabled = true;
+
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', updateSubmitButton);
+    });
+
+    drawPentagonAndArrows();
+});
+
+
+</script>
+
+<div class="top-section">
+    <div class="left-section">
+        <br>
+        <br>
+        <table border="1">
+           <tr>
+                <th></th>
+                <th>Which Ball</th>
+                <th>Which Box</th>
+            </tr>
+            <tr>
+                <td>You (ID: player {{ player.id_in_group }})</td>
+                <td><span style="{{ player_signal_style }}"></span></td>
+                <td><strong><em>{{ quality }}</em></strong></td>
+            </tr>
+            {% for signal_info in other_signals_info %}
+            <tr>
+                <td> player {{ signal_info.player_id }}</td>
+                <td><span style="{{ signal_info.signal_style }}"></span></td>
+                <td>Unknown</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="right-section">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type="radio" name="vote" id="id_vote_0" value="R" style="transform: scale(1.5);">
+        <label for="id_vote_0" style="font-size: 22px;">
+            &nbsp; <span style="color: red; font-weight: bold;">RED</span> state
+        </label>
+        <br><br>
+        <input type="radio" name="vote" id="id_vote_1" value="B" style="transform: scale(1.5);">
+        <label for="id_vote_1" style="font-size: 22px;">
+            &nbsp; <span style="color: blue; font-weight: bold;">BLUE</span> state
+        </label>
+    </div>
+</div>
+
+<br>
+<div class="next-button-container">
+    <button class="submit-button disabled" disabled>Next</button>
+</div>
+
+<hr style="border: 2px solid grey;">
+
+
+<ul>
+    <li><i>This is where all players got their balls. More detailed information please read the instructions we assigned to you.</i></li>
+</ul>
+<div style="text-align: center;">
+   <img src="{% static 'global/urn.png' %}" alt="Urns" width="50%">
+</div>
+
+{{ endblock }}

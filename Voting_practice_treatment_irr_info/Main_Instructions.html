@@ -1,0 +1,176 @@
+{{ extends 'global/Page.html' }}
+   {{ block title }}
+ <div style="text-align: center;">
+     <h1>Main Instructions</h1>
+ </div>
+    {{ endblock }}
+
+{{ block content }}
+        <style>
+            .ribbon {
+               position: relative;
+               top: -16px;
+               right: -706px;
+            }
+        </style>
+
+<br>
+
+<h2> Structure of the experiment </h2>
+<ul>
+  <li> You will face 15 rounds in today's experiment. </li>
+  <li> <b>Each round is independent of other rounds</b>. </li>
+  <li> <b>Each round is equally likely to be selected for your earnings</b>. </li>
+  <li> <b>You might be matched with different participants as group members in each round</b>. </li>
+  <li> Thus, it is important for you to take each round seriously. </li>
+</ul>
+
+<h2> Structure of the round </h2>
+<h4>Stage 1:  Information </h4>
+
+                There is a state called ''unknown state''. This unknown state is either <strong style="color: red;">''RED''</strong> or <strong style="color: blue;">''BLUE''</strong>.
+<br>
+                For each unknown state there are two boxes: <strong><em>Box A</em></strong> and <strong><em>Box B</em></strong>.
+<br>
+                The composition of the boxes and their relation to the “unknown state” is as follows.
+                <ul>
+                    <ul>
+                    <li><strong><em>Box A</em></strong> has 8 (eight) balls in total and <strong><em>Box B</em></strong> has 7 (seven) balls in total. </li>
+                    <li>If the unknown state is <strong style="color: red;">''RED''</strong> then <strong><em>Box A</em></strong> has 7 (seven) red balls and 1 (one) blue ball, while <strong><em>Box B</em></strong> has 4 (four) red balls and 3 (three) blue balls.  </li>
+                    <li>If the unknown state is <strong style="color: blue;">''BLUE''</strong> then <strong><em>Box A</em></strong> has 7 (seven) blue balls and 1 (one) red ball, while <strong><em>Box B</em></strong> has 4 (four) blue balls and 3 (three) red balls.  </li>
+                    </ul>
+                </ul>
+
+<ul>
+<br>
+<div style="text-align: center;">
+   <img src="{% static 'global/urn.png' %}" alt="Urns" width="80%" style="margin-right: 80px;">
+</div>
+<br>
+<br>
+    <li>At the beginning of each round, every 5 participants in this lab will be randomly selected into one group, and each participant will be given a unique ID for that round.  </li>
+    <li>In your group, the computer will flip a coin (50-50) to determine the “unknown state” - either <strong style="color: red;">''RED''</strong> or <strong style="color: blue;">''BLUE''</strong>. <b>No one will be told which state is actually selected!</b> </li>
+    <li>For each of you, the computer will flip a coin (50-50) again to determine a box given the already selected unknown state - either <strong><em>Box A</em></strong> or <strong><em>Box B</em></strong>. </li>
+    <li>For each of you, the computer will <strong><em>randomly</em></strong> and <strong><em>independently</em></strong> pick a ball from your selected box - either <span class='ball red-ball'></span> or <span class='ball blue-ball'></span> . </li>
+    <li>For each of you, the computer will <strong><em>randomly</em></strong> and <strong><em>independently</em></strong> assign you a triangle - either <span class='ball purple-ball'></span> or <span class='ball orange-ball'></span> . </li>
+    <li>The triangle that each group member got will be shown to other group members, <b>BUT</b> the selected box and selected ball will not be shown to other group members. <strong><em>Your box and ball information is private</em></strong>.</li>
+
+    <li>After knowing this information, you will be asked to choose whom you want to send your private information (i.e., your ball & your box) to: </li>
+      a) &nbsp send to a player who got <span class='ball purple-ball'></span>
+<br>
+      b) &nbsp send to a player who got <span class='ball orange-ball'></span>
+<br>
+      c) &nbsp do not send to anyone
+<br>
+<br>
+    <span style="font-size: smaller; font-style: italic;">N.B. 1. If there is more than one group member (except you) who got the same triangle, the computer will randomly send your private information to one of them; 2. if no group member (except you) got the purple triangle, option a) will not be available; if no group member (except you) got the orange triangle, option b) will not be available.</span>
+<br>
+<br>
+    <li>For example, if you got a blue ball from <strong><em>Box B</em></strong>, and assigned an orange triangle, and among your group members: two are assigned purple triangles and two are assigned orange triangles, you will be shown the following:</li>
+
+
+<div style="text-align: center;">
+   <img src="{% static 'global/3.png' %}" alt="Urns" width="115%">
+</div>
+<br>
+<br>
+</ul>
+
+<h4>Stage 2: Voting</h4>
+
+<ul>
+    <li>Once all group members have finished Stage 1, you will be shown the following:</li>
+    1) &nbsp the left table will have more box information if other group members choose to send their private box information to you.
+<br>
+    2) &nbsp the network diagram in the middle includes the flow of information.
+<br>
+    3) &nbsp you need to vote for the ''unknown” state that was chosen at the beginning: <b><span style="color: red;">RED</span></b> or <b><span style="color: blue;">BLUE</span></b>.
+<br>
+<br>
+<div style="text-align: center;">
+   <img src="{% static 'global/4.png' %}" alt="Urns" width="115%">
+</div>
+<br>
+<br>
+    <li>Your earnings: the computer will randomly determine a group member, if he/she votes correctly, each of you in the group will earn <strong style="font-size: 24px;">£15！</strong> If he/she votes incorrectly, each of you in the group will only earn <strong style="font-size: 24px;">£2！</strong></li>
+</ul>
+
+
+
+        <br>
+
+{{ endblock }}
+
+
+{{ block app_styles }}
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+           border: 1px solid black;
+           background-color: bg-light mb-3;
+           color: black;
+           font-weight: solid;
+           font-size: 19px;
+           padding: 10px 10px 10px 10px;
+           text-align: center;
+        }
+        tr.hide_all > td, td.hide_all{
+           border-style:hidden;
+        }
+        tr.hide_right > td, td.hide_right{
+           border-right-style:hidden;
+        }
+        tr.hide_left > td, td.hide_left{
+           border-left-style:hidden;
+        }
+        tr.hide_top > td, td.hide_top{
+           border-top-style:hidden;
+        }
+        tr.hide_bottom > td, td.hide_bottom{
+           border-bottom-style:hidden;
+        }
+        tr.width_bottom > td, td.width_bottom{
+           border-bottom-width:4px;
+        }
+        .red-ball {
+            height: 1em;
+            width: 1em;
+            background-color: red;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        .blue-ball {
+            height: 1em;
+            width: 1em;
+            background-color: blue;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        .purple-ball {
+          width: 0;
+          height: 0;
+          border-left: 0.5em solid transparent;
+          border-right: 0.5em solid transparent;
+          border-bottom: 1em solid purple;
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 5px;
+        }
+        .orange-ball {
+              width: 0;
+              height: 0;
+              border-left: 0.5em solid transparent;
+              border-right: 0.5em solid transparent;
+              border-bottom: 1em solid orange;
+              display: inline-block;
+              vertical-align: middle;
+              margin: 0 5px;
+        }
+    </style>
+{{ endblock }}

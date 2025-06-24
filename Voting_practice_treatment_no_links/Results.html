@@ -1,0 +1,165 @@
+
+   {{ block title }}
+ <div style="text-align: center;">
+    Results in your Practice
+ </div>
+    {{ endblock }}
+
+{{ block content }}
+<style>
+     .ribbon {
+         position: relative;
+         top: -16px;
+         right: -706px;
+     }
+    .submit-button {
+        text-align: center;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        outline: none;
+        float: right;
+        border-radius: 8px;
+    }
+</style>
+
+         <div style="text-align: justify;" class="card bg-light mb-3  ">
+            <div class="card-body">
+                <br>
+
+<br>
+    <table class="mx-auto & styled-table">
+        <thead>
+        <tr>
+            <td> Round </td>
+            <td> Selected player</td>
+            <td> Selected <br> player's vote</td>
+            <td> True state </td>
+            <td> Your vote </td>
+            <td> Round payment </td>
+        </tr>
+        </thead>
+        <tr>
+            <td class="hide_bottom"> 1 </td>
+            <td class="hide_bottom"> player {{selected_voter_round_1}} </td>
+            <td class="hide_bottom"> {{selected_vote_round_1}}  </td>
+            <td class="hide_bottom">{{state_round_1}} </td>
+            <td class="hide_bottom"> {{vote_round_1}} </td>
+            <td class="hide_bottom"> £{{payoff_record_round_1}} </td>
+        </tr>
+
+        <tr>
+            <td class="hide_bottom"> 2 </td>
+            <td class="hide_bottom"> player {{selected_voter_round_2}} </td>
+            <td class="hide_bottom"> {{selected_vote_round_2}}  </td>
+            <td class="hide_bottom">{{state_round_2}} </td>
+            <td class="hide_bottom"> {{vote_round_2}} </td>
+            <td class="hide_bottom"> £{{payoff_record_round_2}} </td>
+        </tr>
+
+        <tr>
+            <td class="hide_bottom"> 3 </td>
+            <td class="hide_bottom"> player {{selected_voter_round_3}} </td>
+            <td class="hide_bottom"> {{selected_vote_round_3}}  </td>
+            <td class="hide_bottom">{{state_round_3}} </td>
+            <td class="hide_bottom"> {{vote_round_3}} </td>
+            <td class="hide_bottom"> £{{payoff_record_round_3}} </td>
+        </tr>
+
+        <tr>
+            <td class="hide_bottom"> 4 </td>
+            <td class="hide_bottom"> player {{selected_voter_round_4}} </td>
+            <td class="hide_bottom"> {{selected_vote_round_4}}  </td>
+            <td class="hide_bottom">{{state_round_4}} </td>
+            <td class="hide_bottom"> {{vote_round_4}} </td>
+            <td class="hide_bottom"> £{{payoff_record_round_4}} </td>
+        </tr>
+
+        <tr>
+            <td class="hide_bottom"> 5 </td>
+            <td class="hide_bottom"> player {{selected_voter_round_5}} </td>
+            <td class="hide_bottom"> {{selected_vote_round_5}}  </td>
+            <td class="hide_bottom">{{state_round_5}} </td>
+            <td class="hide_bottom"> {{vote_round_5}} </td>
+            <td class="hide_bottom"> £{{payoff_record_round_5}} </td>
+        </tr>
+    </table>
+<br>
+
+
+
+<ul>
+  <li>  From the above table, the computer has randomly chosen one voter in each round, and your payment in that round was determined by the selected voter's vote and the true state. </li>
+  <li>  Therefore, the more voters vote correctly, the higher the probability that you can win <strong style="font-size: 24px;">£15 !</strong></li>
+  <li>  Please raise you hand for any questions. If not, we will start the actual session for today's experiment!</li>
+</ul>
+
+            </div>
+        </div>
+{{ endblock }}
+
+
+{{ block app_styles }}
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+           border: 1px solid black;
+           background-color: bg-light mb-3;
+           color: black;
+           font-weight: solid;
+           font-size: 19px;
+           padding: 10px 10px 10px 10px;
+           text-align: center;
+        }
+        tr.hide_all > td, td.hide_all{
+           border-style:hidden;
+        }
+        tr.hide_right > td, td.hide_right{
+           border-right-style:hidden;
+        }
+        tr.hide_left > td, td.hide_left{
+           border-left-style:hidden;
+        }
+        tr.hide_top > td, td.hide_top{
+           border-top-style:hidden;
+        }
+        tr.hide_bottom > td, td.hide_bottom{
+           border-bottom-style:hidden;
+        }
+        tr.width_bottom > td, td.width_bottom{
+           border-bottom-width:4px;
+        }
+        .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+        background-color: lightgray;
+        color: #ffffff;
+        text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+        padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+        }
+        .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #009879;
+        }
+
+    </style>
+{{ endblock }}

@@ -1,0 +1,240 @@
+{{ extends 'global/Page.html' }}
+
+{{ block title }}
+<div style="text-align: center;">
+    <h4>Practice round {{ player.round_number }} out of 5</h4>
+</div>
+{{ endblock }}
+
+{{ block content }}
+<style>
+    .red-ball {
+        height: 1em;
+        width: 1em;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 5px;
+    }
+    .blue-ball {
+        height: 1em;
+        width: 1em;
+        background-color: blue;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 5px;
+    }
+    .purple-ball {
+          width: 0;
+          height: 0;
+          border-left: 0.5em solid transparent;
+          border-right: 0.5em solid transparent;
+          border-bottom: 1em solid purple;
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 5px;
+    }
+    .orange-ball {
+          width: 0;
+          height: 0;
+          border-left: 0.5em solid transparent;
+          border-right: 0.5em solid transparent;
+          border-bottom: 1em solid orange;
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 5px;
+    }
+    .ribbon {
+        position: relative;
+        top: -16px;
+        right: -706px;
+    }
+    .blue {
+        color: blue;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8em;
+    }
+    td, th {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+    }
+    .submit-button {
+        text-align: center;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        outline: none;
+        border-radius: 8px;
+        display: none;
+    }
+    .form-container {
+        font-size: 1em;
+        margin-left: 10px;
+        margin-right: 0px;
+    }
+    .next-page-button {
+        background-color: grey;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: not-allowed;
+        float: right;
+        border-radius: 8px;
+    }
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .left-section {
+        flex: 1.1;
+        padding-right: 50px;
+    }
+    .right-section {
+        flex: 1;
+        padding-left: 30px;
+    }
+</style>
+
+
+<input type="hidden" name="timeSpent1" id="timeSpent1"/>
+<script>
+var pageTimeElapsed = 0;
+var pageTimerID = -1;
+var timerFinished = false;
+var selectionMade = false;
+
+function pageTick() {
+  pageTimeElapsed++;
+  document.getElementById("timeSpent1").value = pageTimeElapsed;
+  if (pageTimeElapsed >= 5) {
+    timerFinished = true;
+    checkSelection();
+  }
+}
+
+window.onload = function() {
+  if (pageTimerID == -1) {
+    pageTimerID = setInterval(pageTick, 1000);
+  }
+};
+
+function checkSelection() {
+    var radioButtons = document.getElementsByName('decision');
+    var submitButton = document.getElementById('submitButton');
+    selectionMade = false;
+
+    for (var i = 0; i < radioButtons.length; i++) {
+        if (radioButtons[i].checked) {
+            selectionMade = true;
+            break;
+        }
+    }
+
+    if (selectionMade && timerFinished) {
+        submitButton.style.backgroundColor = '#007BFF';
+        submitButton.style.cursor = 'pointer';
+        submitButton.disabled = false;
+    } else {
+        submitButton.style.backgroundColor = 'grey';
+        submitButton.style.cursor = 'not-allowed';
+        submitButton.disabled = true;
+    }
+}
+</script>
+
+<br>
+<br>
+<div class="content-container">
+    <div class="left-section">
+        <table>
+           <tr>
+                <th></th>
+                <th>Which Triangle</th>
+                <th>Which Ball</th>
+                <th>Which Box</th>
+            </tr>
+            <tr>
+                <td>You (ID: player {{ player.id_in_group }})</td>
+                <td><span style="{{ player_irrelevant_info }}"></span></td>
+                <td><span style="{{ player_signal_style }}"></span></td>
+                <td><strong><em>{{ quality }}</em></strong></td>
+            </tr>
+            {% for signal_info in other_signals_info %}
+            <tr>
+                <td> player {{ signal_info.player_id }}</td>
+                <td><span style="{{ signal_info.irrinfo }}"></span></td>
+                <td>Unknown</td>
+                <td>Unknown</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="right-section">
+        <br>
+        <div class="form-container">
+            <form method="post">
+                <label for="decision">Please choose whom you want to send your information (i.e. your ball & your Box) to:</label><br>
+                <br>
+                {% for option in player.get_decision_options %}
+                    <input type="radio" id="decision_{{ forloop.counter }}" name="decision" value="{{ option }}" class="radio-button" onclick="checkSelection()">
+                    <label for="decision_{{ forloop.counter }}" class="getballs">{{ option }}</label><br>
+                {% endfor %}
+                <br><br><br>
+                <input type="submit" id="submitButton" value="Next" class="next-page-button" disabled>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<hr style="border: 2px solid grey;">
+
+<ul>
+    <li><i>This is where all players got their balls. More detailed information please read the instructions we assigned to you.</i></li>
+</ul>
+
+<div style="text-align: center;">
+    <img src="{% static 'global/urn.png' %}" alt="Urns" width="50%">
+</div>
+<br>
+
+{{ endblock }}
+
+{{ block app_styles }}
+<style>
+    table, td, th {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .radio-button {
+        transform: scale(1.5);
+        margin-right: 10px;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const items = document.querySelectorAll(".getballs");
+
+    items.forEach(function(item) {
+        if(item.innerHTML.includes("P")) {
+            item.innerHTML = item.innerHTML.replace("P", "<span class='ball purple-ball'></span>");
+        }
+        if(item.innerHTML.includes("O")) {
+            item.innerHTML = item.innerHTML.replace("O", "<span class='ball orange-ball'></span>");
+        }
+    });
+});
+</script>
+{{ endblock }}

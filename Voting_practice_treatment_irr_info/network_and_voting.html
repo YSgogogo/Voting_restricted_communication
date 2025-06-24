@@ -1,0 +1,345 @@
+{{ block title }}
+<div style="text-align: center;">
+    <h4>Practice round {{ player.round_number }} out of 5</h4>
+
+    <h4>Please choose a state that you believe is the unknown state in this round </h4>
+</div>
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .content {
+        font-size: 20px;
+        margin-left: 30px;
+    }
+    .submit-button {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        outline: none;
+        border-radius: 8px;
+        position: relative;
+        left: -20px;
+    }
+    .submit-button.disabled {
+        background-color: grey;
+        cursor: not-allowed;
+    }
+    .blue {
+        color: blue;
+    }
+    table {
+        width: 120%;
+        border-collapse: collapse;
+        font-size: 0.8em;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 6px;
+        text-align: center;
+    }
+    .player-id {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .top-section {
+        display: flex;
+        margin-top: -20px;
+    }
+     .left-section {
+        font-size: 19px;
+        flex: 1.2;
+        margin-left: 20px;
+        margin-right: 200px;
+    }
+    .middle-section {
+        flex: 1.2;
+        margin-right: 30px;
+        margin-top: 20px;
+    }
+    .right-section {
+        flex: 1;
+        margin-right: -100px;
+    }
+    .next-button-container {
+        text-align: right;
+        margin-right: -10px;
+    }
+</style>
+
+<input type="hidden" name="timeSpent2" id="timeSpent2"/>
+<script>
+var pageTimeElapsed = 0;
+var pageTimerID = -1;
+var timerFinished = false;
+var selectionMade = false;
+
+function pageTick() {
+  pageTimeElapsed++;
+  document.getElementById("timeSpent2").value = pageTimeElapsed;
+  if (pageTimeElapsed >= 5) {
+    timerFinished = true;
+    updateSubmitButton();
+  }
+}
+
+window.onload = function() {
+  if (pageTimerID == -1) {
+    pageTimerID = setInterval(pageTick, 1000);
+  }
+};
+
+function updateSubmitButton() {
+    var radios = document.querySelectorAll('input[name="vote"]');
+    var button = document.querySelector('.submit-button');
+    selectionMade = false;
+
+    radios.forEach(function(radio) {
+        if (radio.checked) {
+            selectionMade = true;
+        }
+    });
+
+    if (selectionMade && timerFinished) {
+        button.classList.remove('disabled');
+        button.disabled = false;
+    } else {
+        button.classList.add('disabled');
+        button.disabled = true;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var radios = document.querySelectorAll('input[name="vote"]');
+    var button = document.querySelector('.submit-button');
+
+    button.classList.add('disabled');
+    button.disabled = true;
+
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', updateSubmitButton);
+    });
+
+    drawPentagonAndArrows();
+});
+
+function drawPentagonAndArrows() {
+    var svgContainer = document.getElementById('svg-container');
+    var width = 300, height = 300;
+    var centerX = width / 2, centerY = height / 2;
+    var radius = 80;
+
+    var players = [
+        {id: 1, angle: 270},
+        {id: 2, angle: 200},
+        {id: 3, angle: 144},
+        {id: 4, angle: 340},
+        {id: 5, angle: 34}
+    ];
+
+    var playerId = {{ player.id_in_group }};
+    var playerSignalStyles = {
+        {% for participant in participants_info %}
+        {{ participant.id_in_group }}: "{{ participant.player_irrelevant_info }}",
+        {% endfor %}
+    };
+
+    var allInfoFromWhom = {
+        {% for participant in participants_info %}
+        {{ participant.id_in_group }}: "{{ participant.all_info }}",
+        {% endfor %}
+    };
+
+    var svg = `<svg width="${width}" height="${height}">`;
+
+    var arrowPairs = {};
+    Object.keys(allInfoFromWhom).forEach(toId => {
+        var infoSources = allInfoFromWhom[toId].split(',').map(Number);
+        infoSources.forEach(fromId => {
+            if (fromId === parseInt(toId)) return;
+
+            var key = `${fromId}-${toId}`;
+            var reverseKey = `${toId}-${fromId}`;
+            if (!arrowPairs[key] && !arrowPairs[reverseKey]) {
+                arrowPairs[key] = 1;
+            } else if (arrowPairs[key] !== undefined) {
+                arrowPairs[key]++;
+            } else {
+                arrowPairs[reverseKey]++;
+            }
+        });
+    });
+
+    Object.keys(arrowPairs).forEach(key => {
+        var [fromId, toId] = key.split('-').map(Number);
+        var fromPlayer = players.find(p => p.id === fromId);
+        var toPlayer = players.find(p => p.id === toId);
+        var arrowCount = arrowPairs[key];
+
+        var fromAngleRad = fromPlayer.angle * (Math.PI / 180);
+        var toAngleRad = toPlayer.angle * (Math.PI / 180);
+
+        var fromX = centerX + radius * Math.cos(fromAngleRad);
+        var fromY = centerY + radius * Math.sin(fromAngleRad);
+        var toX = centerX + radius * Math.cos(toAngleRad);
+        var toY = centerY + radius * Math.sin(toAngleRad);
+
+        var midX = (fromX + toX) / 2;
+        var midY = (fromY + toY) / 2;
+
+        var dx = fromX - toX;
+        var dy = fromY - toY;
+        var length = Math.sqrt(dx * dx + dy * dy);
+        var shortenFactor = (length - 60) / length;  // adjust arrow length
+
+        var offsetX = 0;
+        var offsetY = 0;
+        if (arrowCount === 2) {
+            offsetX = 5 * dy / length;
+            offsetY = -5 * dx / length;
+        }
+
+        fromX = midX + (dx * shortenFactor) / 2 + offsetX;
+        fromY = midY + (dy * shortenFactor) / 2 + offsetY;
+        toX = midX - (dx * shortenFactor) / 2 + offsetX;
+        toY = midY - (dy * shortenFactor) / 2 + offsetY;
+
+        svg += `<line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}" stroke="black" marker-end="url(#arrowhead)" />`;
+
+        if (arrowCount === 2) {
+            fromX = midX + (dx * shortenFactor) / 2 - offsetX;
+            fromY = midY + (dy * shortenFactor) / 2 - offsetY;
+            toX = midX - (dx * shortenFactor) / 2 - offsetX;
+            toY = midY - (dy * shortenFactor) / 2 - offsetY;
+
+            svg += `<line x1="${toX}" y1="${toY}" x2="${fromX}" y2="${fromY}" stroke="black" marker-end="url(#arrowhead)" />`;
+        }
+    });
+
+    svg += `<defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="3" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" />
+                </marker>
+            </defs>`;
+
+    players.forEach(player => {
+        var angleRad = player.angle * (Math.PI / 180);
+        var x = centerX + radius * Math.cos(angleRad);
+        var y = centerY + radius * Math.sin(angleRad);
+        var color = player.id === playerId ? 'green' : 'gray';
+
+        svg += `<circl cx="${x}" cy="${y}" r="10" fill="${color}" />`;
+
+        var textX = x;
+        var textY = y;
+        var textStyle = player.id === playerId ? 'font-weight: bold;' : 'font-weight: normal;';
+        var textContent = player.id === playerId ? 'You' : `player ${player.id}`;
+
+        if (player.id === 1) {
+            svg += `<text x="${textX}" y="${textY + 5}" class="player-id" text-anchor="middle" style="${textStyle}">${textContent}</text>`;
+            svg += `<foreignObject x="${textX - 15}" y="${textY - 35}" width="30" height="30">
+                        <div style="${playerSignalStyles[player.id]}"></div>
+                    </foreignObject>`;
+        } else if (player.id === 2 || player.id === 3) {
+            svg += `<text x="${textX-6}" y="${textY + 5}" class="player-id" text-anchor="middle" style="${textStyle}">${textContent}</text>`;
+            svg += `<foreignObject x="${textX - 60}" y="${textY - 13}" width="30" height="30">
+                        <div style="${playerSignalStyles[player.id]}"></div>
+                    </foreignObject>`;
+        } else if (player.id === 4 || player.id === 5) {
+            svg += `<text x="${textX+4}" y="${textY + 5}" class="player-id" text-anchor="middle" style="${textStyle}">${textContent}</text>`;
+            svg += `<foreignObject x="${textX + 30}" y="${textY - 14}" width="30" height="30">
+                        <div style="${playerSignalStyles[player.id]}"></div>
+                    </foreignObject>`;
+        }
+    });
+
+
+    svg += `</svg>`;
+    svgContainer.innerHTML = svg;
+}
+
+</script>
+
+<div class="top-section">
+    <div class="left-section">
+        <br>
+        <br>
+        <table border="1">
+            <tr>
+                <th></th>
+                <th>Which Triangle</th>
+                <th>Which Ball</th>
+                <th>Which Box</th>
+            </tr>
+            {% for participant in participants_info %}
+            <tr>
+                <td>
+                    {% if participant.is_self %}
+                        You (ID: player {{ participant.id_in_group }})
+                    {% else %}
+                        player {{ participant.id_in_group }}
+                    {% endif %}
+                </td>
+                <td>
+                    <span style="{{ participant.player_irrelevant_info }}"></span>
+                </td>
+                <td>
+                    <span style="{{ participant.ball_info }}">
+                        {% if participant.ball_info == 'Unknown' %}
+                            Unknown
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    {% if participant.box_info == 'Unknown' %}
+                        {{ participant.box_info }}
+                    {% else %}
+                        <strong><em>{{ participant.box_info }}</em></strong>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- <div class="middle-section" id="svg-container"> -->
+        <!-- The SVG container for the pentagon and arrows will be here -->
+    <!-- </div> -->
+
+    <div class="right-section">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type="radio" name="vote" id="id_vote_0" value="R" style="transform: scale(1.5);">
+        <label for="id_vote_0" style="font-size: 22px;">
+            &nbsp; <span style="color: red; font-weight: bold;">RED</span> state
+        </label>
+        <br><br>
+        <input type="radio" name="vote" id="id_vote_1" value="B" style="transform: scale(1.5);">
+        <label for="id_vote_1" style="font-size: 22px;">
+            &nbsp; <span style="color: blue; font-weight: bold;">BLUE</span> state
+        </label>
+    </div>
+</div>
+
+
+<div class="next-button-container">
+    <button class="submit-button disabled" disabled>Next</button>
+</div>
+
+<hr style="border: 2px solid grey;">
+
+
+<ul>
+    <li><i>This is where all players got their balls. More detailed information please read the instructions we assigned to you.</i></li>
+</ul>
+<div style="text-align: center;">
+   <img src="{% static 'global/urn.png' %}" alt="Urns" width="50%">
+</div>
+
+{{ endblock }}

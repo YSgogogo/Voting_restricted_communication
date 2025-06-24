@@ -1,0 +1,105 @@
+{{ extends 'global/Page.html' }}
+   {{ block title }}
+ <div style="text-align: center;">
+     <h1>Survey</h1>
+ </div>
+    {{ endblock }}
+
+{{ block content }}
+        <style>
+            .ribbon {
+               position: relative;
+               top: -16px;
+               right: -706px;
+            }
+        </style>
+
+
+<div style="text-align: justify;" class="card bg-light mb-3">
+    <div class="card-body">
+                <br>
+<ul>
+<li> Here are the final four questions. In each question, you will be presented with two lottery options. Each lottery has different probabilities of yielding various payoffs. Please indicate which lottery you want to choose: </li>
+</ul>
+
+        <br>
+<ul>
+    <li> Lottery A: 34.26% receiving £13.72, 48.54% receiving £10.04, and 17.20% receiving £10.12 </li>
+    <li> Lottery B: 34.26% receiving £12.85, 48.54% receiving £9.50, and 17.20% receiving £10.22 </li>
+
+    {{form.R_H}}
+</ul>
+<br>
+
+<ul>
+    <li> Lottery A: 27.08% receiving £10.14, 49.92% receiving £9.15, and 23.00% receiving £7.03 </li>
+    <li> Lottery B: 27.08% receiving £10.14, 49.92% receiving £8.95, and 23.00% receiving £8.43 </li>
+
+    {{form.R_L}}
+</ul>
+
+<br>
+
+<ul>
+    <li> Lottery A: 50.19% receiving £7.21, and 49.81% receiving £9.19 </li>
+    <li> Lottery B: 50.19% receiving £7.94, and 49.92% receiving £9.02 </li>
+
+    {{form.B_H}}
+</ul>
+<br>
+
+<ul>
+    <li> Lottery A: 35.39% receiving £11.25, and 64.61% receiving £13.76 </li>
+    <li> Lottery B: 35.39% receiving £9.75, and 64.61% receiving £13.76 </li>
+
+    {{form.B_L}}
+</ul>
+<br>
+
+
+<br>
+        <br>
+    </div>
+</div>
+
+<div style="flush:center; text-align: center;">
+    {{ next_button }}
+</div>
+{{ endblock }}
+
+
+{{ block app_styles }}
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+           border: 1px solid black;
+           background-color: bg-light mb-3;
+           color: black;
+           font-weight: solid;
+           font-size: 19px;
+           padding: 10px 10px 10px 10px;
+           text-align: center;
+        }
+        tr.hide_all > td, td.hide_all{
+           border-style:hidden;
+        }
+        tr.hide_right > td, td.hide_right{
+           border-right-style:hidden;
+        }
+        tr.hide_left > td, td.hide_left{
+           border-left-style:hidden;
+        }
+        tr.hide_top > td, td.hide_top{
+           border-top-style:hidden;
+        }
+        tr.hide_bottom > td, td.hide_bottom{
+           border-bottom-style:hidden;
+        }
+        tr.width_bottom > td, td.width_bottom{
+           border-bottom-width:4px;
+        }
+
+    </style>
+{{ endblock }}

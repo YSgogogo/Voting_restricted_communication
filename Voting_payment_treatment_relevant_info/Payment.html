@@ -1,0 +1,123 @@
+{{ extends 'global/Page.html' }}
+   {{ block title }}
+ <div style="text-align: center;">
+    Your earnings in this experiment
+ </div>
+    {{ endblock }}
+
+{{ block content }}
+        <style>
+            .ribbon {
+               position: relative;
+               top: -16px;
+               right: -706px;
+            }
+        </style>
+
+         <div style="text-align: justify;" class="card bg-light mb-3  ">
+            <div class="card-body">
+                <br>
+
+<ul>
+  <li>  Thank you for participating in today’s experiment. </li>
+  <li>  Check what you have earned from this experiment: </li>
+</ul>
+
+<br>
+    <table class="mx-auto & styled-table">
+        <thead>
+        <tr>
+
+            <td> selected  round</td>
+            <td> earnings in selected round </td>
+            <td> show-up</td>
+            <td> Total </td>
+        </tr>
+        </thead>
+
+        <tr class="active-row">
+            <td class="hide_bottom"> round {{player.round_to_pay}}  </td>
+            <td class="hide_bottom"> £{{player.money_to_pay}}.00  </td>
+            <td class="hide_bottom"> £5.00 </td>
+            <td class="hide_bottom"> £{{player.total_to_pay}}.00 </td>
+        </tr>
+
+
+    </table>
+<br>
+
+
+
+<ul>
+  <li>  You are now free to leave, and we will email you soon about your earnings from this experiment.</li>
+</ul>
+
+            </div>
+        </div>
+        <br>
+
+{{ endblock }}
+
+
+{{ block app_styles }}
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+           border: 1px solid black;
+           background-color: bg-light mb-3;
+           color: black;
+           font-weight: solid;
+           font-size: 19px;
+           padding: 10px 10px 10px 10px;
+           text-align: center;
+        }
+        tr.hide_all > td, td.hide_all{
+           border-style:hidden;
+        }
+        tr.hide_right > td, td.hide_right{
+           border-right-style:hidden;
+        }
+        tr.hide_left > td, td.hide_left{
+           border-left-style:hidden;
+        }
+        tr.hide_top > td, td.hide_top{
+           border-top-style:hidden;
+        }
+        tr.hide_bottom > td, td.hide_bottom{
+           border-bottom-style:hidden;
+        }
+        tr.width_bottom > td, td.width_bottom{
+           border-bottom-width:4px;
+        }
+        .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+        background-color: lightgray;
+        color: #ffffff;
+        text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+        padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+        }
+        .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #009879;
+        }
+
+    </style>
+{{ endblock }}
