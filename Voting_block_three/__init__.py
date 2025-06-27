@@ -2,7 +2,7 @@ from otree.api import *
 import random
 
 
-doc = """Three-player voting experiment **with full, public information and no messaging choices**."""
+doc = """Three-player voting experiment with full, public information and no messaging choices**."""
 
 # ------------------------------------------------------------------
 #  Constants
