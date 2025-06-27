@@ -1,0 +1,72 @@
+{% load static %}
+{% extends "global/Page.html" %}
+
+{# ---------------- Page: Final earnings ---------------- #}
+{% block title %}
+<div style="text-align:center;">
+    <h1>Your earnings in this experiment</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<style>
+/* ――― basic table styling ――― */
+.styled-table{border-collapse:collapse;margin:25px auto;font-size:0.95em;font-family:sans-serif;min-width:420px;box-shadow:0 0 20px rgba(0,0,0,0.15);}
+.styled-table thead tr{background-color:lightgray;color:#000;text-align:center;}
+.styled-table th,.styled-table td{padding:12px 15px;border:1px solid #000;text-align:center;}
+.styled-table tbody tr:nth-of-type(even){background-color:#f3f3f3;}
+.styled-table tbody tr.active-row{font-weight:bold;color:#009879;}
+</style>
+
+<div class="card bg-light mb-3">
+  <div class="card-body">
+    <ul>
+      <li>Thank you for participating in today’s experiment.</li>
+      <li>Below is a summary of your earnings:</li>
+    </ul>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Block</th>
+          <th>Selected round</th>
+          <th>Earnings (£)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Block&nbsp;1</td>
+          <td>{{ player.round_to_pay_block_one }}</td>
+          <td>{{ player.money_to_pay_block_one }}</td>
+        </tr>
+        <tr>
+          <td>Block&nbsp;2</td>
+          <td>{{ player.round_to_pay_block_two }}</td>
+          <td>{{ player.money_to_pay_block_two }}</td>
+        </tr>
+        <tr>
+          <td>Block&nbsp;3</td>
+          <td>{{ player.round_to_pay_block_three }}</td>
+          <td>{{ player.money_to_pay_block_three }}</td>
+        </tr>
+        <tr>
+          <td>Show‑up fee</td>
+          <td>—</td>
+          <td>5</td>
+        </tr>
+        <tr class="active-row">
+          <td><b>Total</b></td>
+          <td>—</td>
+          <td><b>{{ player.total_to_pay }}</b></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ul>
+      <li>You may now leave. We will email you shortly with payment details.</li>
+    </ul>
+  </div>
+</div>
+
+{% endblock %}

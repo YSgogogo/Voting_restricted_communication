@@ -1,0 +1,118 @@
+{% load static %}
+{% extends "global/Page.html" %}
+
+{# -------------------------------------- #}
+{#   Voting page – all information PUBLIC #}
+{# -------------------------------------- #}
+
+{% block title %}
+<div style="text-align:center;">
+    <h1>Round {{ player.round_number }}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<style>
+/* ------ Layout for urns ------ */
+.urn-row{display:flex;justify-content:center;gap:60px;margin-bottom:25px;}
+.urn-box{position:relative;width:150px;text-align:center;font-size:18px;}
+.urn-img{width:100%;max-width:120px;}
+
+/* Badge: S / W */
+.badge{
+    position:absolute;top:-50px;left:50%;transform:translateX(-50%);
+    width:30px;height:30px;border:2px solid #000;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font:400 20px/1 "Arial",sans-serif;color:#000;background:#fff;z-index:9;
+}
+
+/* Button */
+.next-page-button{background:grey;color:#fff;border:none;padding:10px 20px;
+    cursor:not-allowed;border-radius:8px;}
+.radio-button{transform:scale(1.4);margin-right:8px;}
+
+.urn-caption{font-size:16px;line-height:1.2;}
+</style>
+
+<input type="hidden" id="timeSpent2" name="timeSpent2"/>
+
+<script>
+let t=0,timer=-1;
+function enableIfReady(){
+    const ok = t>=5 && document.querySelector('input[name="vote"]:checked');
+    const btn = document.getElementById('nextBtn');
+    btn.disabled = !ok;
+    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    btn.style.backgroundColor = ok ? '#007BFF' : 'grey';
+}
+window.onload = () => {
+    timer = setInterval(() => {
+        document.getElementById('timeSpent2').value = ++t;
+        enableIfReady();
+        if(t>=60) clearInterval(timer); // safety stop
+    }, 1000);
+};
+function voteChanged(){ enableIfReady(); }
+</script>
+
+<div style="text-align:center;">
+    <h3>Please choose the state you believe occurred state in this round</h3>
+</div>
+<br><br>
+<ul>
+ <li>This is the information you have received in this round. </li>
+</ul>
+<br><br><br>
+
+{# ---------- Display urns ---------- #}
+<div class="urn-row">
+{% for row in participants_info %}
+    <div class="urn-box">
+        {# Badge: S for Box A (high), W for Box B (low) #}
+        {% if row.box_info == 'Box A' %}
+            <span class="badge">S</span>
+        {% else %}
+            <span class="badge">W</span>
+        {% endif %}
+
+        {# Urn image based on signal colour #}
+        {% if 'background-color:red' in row.player_signal_style %}
+            <img src="{% static 'IndividualDecision/red_urn.png' %}" class="urn-img" alt="urn">
+        {% else %}
+            <img src="{% static 'IndividualDecision/blue_urn.png' %}" class="urn-img" alt="urn">
+        {% endif %}
+
+        <div class="urn-caption">
+            {% if row.is_self %}You{% else %}Group&nbsp;member{% endif %}&nbsp;(ID:&nbsp;{{ row.id_in_group }})
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<br>
+<br>
+
+Please guess the occurred state based on the information you have received above?
+
+<br>
+<br>
+
+<form method="post">
+    <div style="font-size:20px;">
+        <input type="radio" class="radio-button" name="vote" id="voteR" value="R" onchange="voteChanged()">
+        <label for="voteR"><span style="color:red;font-weight:bold;">RED</span></label><br>
+        <input type="radio" class="radio-button" name="vote" id="voteB" value="B" onchange="voteChanged()">
+        <label for="voteB"><span style="color:blue;font-weight:bold;">BLUE</span></label>
+    </div>
+    <br>
+    <input type="submit" id="nextBtn" value="Next" class="next-page-button" disabled>
+</form>
+
+<br>
+<br>
+<hr style="border:2px solid grey;margin-top:25px;">
+<ul><li><i>This is where all group members got their balls. Please refer to the instructions for details.</i></li></ul>
+<div style="text-align:center;"><img src="{% static 'IndividualDecision/urnRB.png' %}" alt="Urns" width="50%"></div>
+
+{% endblock %}

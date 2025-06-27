@@ -1,0 +1,84 @@
+{{ extends 'global/Page.html' }}
+   {{ block title }}
+ <div style="text-align: center;">
+     <h1>Survey</h1>
+ </div>
+    {{ endblock }}
+
+{{ block content }}
+        <style>
+            .ribbon {
+               position: relative;
+               top: -16px;
+               right: -706px;
+            }
+        </style>
+
+
+<div style="text-align: justify;" class="card bg-light mb-3">
+    <div class="card-body">
+                <br>
+
+<h2> Gender </h2>
+<ul>
+    <li> Please select the gender that you identify with: </li>
+    {{form.Gender}}
+</ul>
+<br>
+<h2> How did you make the decisions for today's experiment? </h2>
+<ul>
+    <li> Please briefly explain how you chose whom to send your information to: </li>
+    <textarea name="{{form.How_choose_info.name}}" rows="5" cols="40">{{form.How_choose_info.data or ''}}</textarea>
+</ul>
+<ul>
+    <li> Please briefly explain how you chose the unknown state: </li>
+    <textarea name="{{form.How_choose_state.name}}" rows="5" cols="40">{{form.How_choose_state.data or ''}}</textarea>
+</ul>
+
+
+<br>
+        <br>
+    </div>
+</div>
+
+<div style="flush:center; text-align: center;">
+    {{ next_button }}
+</div>
+{{ endblock }}
+
+
+{{ block app_styles }}
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+           border: 1px solid black;
+           background-color: bg-light mb-3;
+           color: black;
+           font-weight: solid;
+           font-size: 19px;
+           padding: 10px 10px 10px 10px;
+           text-align: center;
+        }
+        tr.hide_all > td, td.hide_all{
+           border-style:hidden;
+        }
+        tr.hide_right > td, td.hide_right{
+           border-right-style:hidden;
+        }
+        tr.hide_left > td, td.hide_left{
+           border-left-style:hidden;
+        }
+        tr.hide_top > td, td.hide_top{
+           border-top-style:hidden;
+        }
+        tr.hide_bottom > td, td.hide_bottom{
+           border-bottom-style:hidden;
+        }
+        tr.width_bottom > td, td.width_bottom{
+           border-bottom-width:4px;
+        }
+
+    </style>
+{{ endblock }}

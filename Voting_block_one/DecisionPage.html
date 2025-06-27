@@ -1,0 +1,65 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+<div style="text-align: center;">
+    <h1>Round {{ player.round_number }}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+    <style>
+        .ribbon {
+            position: relative;
+            top: -16px;
+            right: -706px;
+        }
+        .blue {
+            color: blue;
+        }
+    </style>
+
+    <br>
+
+
+    <div style="text-align: center;">
+        <h3>Please choose a state that you believe is the occurred state in this round </h3>
+    </div>
+    <br>
+    <br>
+    <br>
+<ul>
+ <li> This is the information you have received in this round. </li>
+</ul>
+    <img src="{% static image_file %}"
+         class="img-fluid d-block mx-auto mb-3"
+         style="max-width:500px;"
+         alt="Urn">
+
+
+    {{ formfields }}
+
+    {{ next_button }}
+<br>
+<br>
+<hr style="border:2px solid grey;margin-top:25px;">
+<ul><li><i>This is where you got your balls. Please refer to the instructions for details.</i></li></ul>
+<div style="text-align:center;"><img src="{% static 'IndividualDecision/urnRB.png' %}" alt="Urns" width="50%"></div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('label').forEach(function (lab) {
+        const txt = lab.textContent.trim();
+        if (txt === 'RED') {
+            lab.style.color = 'red';
+            lab.style.fontWeight = 'bold';
+        } else if (txt === 'BLUE') {
+            lab.style.color = 'blue';
+            lab.style.fontWeight = 'bold';
+        }
+    });
+});
+</script>
+{% endblock %}
