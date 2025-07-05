@@ -7,6 +7,12 @@ SESSION_CONFIGS = [
         display_name="Voting",
         app_sequence=['Voting_block_one', 'Voting_block_two', 'Voting_block_three', 'Voting_payment'],
         num_demo_participants=3,
+    ),
+    dict(
+        name='A_Voting',
+        display_name="A_Voting",
+        app_sequence=['A_Voting_one','A_Voting_two','A_Voting_three','A_Voting_four',],
+        num_demo_participants=3,
     )
 
 

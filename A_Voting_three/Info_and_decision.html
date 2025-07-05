@@ -1,0 +1,175 @@
+
+
+{# ---------------- 页眉 ---------------- #}
+{% block title %}
+
+<div style="text-align: center;">
+    <h1>Round {{ player.round_number }}</h1>
+</div>
+{% endblock %}
+
+{# ---------------- 主体 ---------------- #}
+{% block content %}
+
+<style>
+/* ------ 公共按钮 ------ */
+.next-page-button{
+    background:grey;color:#fff;border:none;padding:10px 20px;
+    cursor:not-allowed;border-radius:8px;
+}
+.radio-button{transform:scale(1.4);margin-right:8px;}
+
+/* ------ 罐子排版 ------ */
+.urn-row{display:flex;justify-content:center;gap:60px;margin-bottom:25px;}
+.urn-box{position:relative;width:150px;text-align:center;font-size:18px;}
+.urn-img{width:100%;max-width:120px;}
+
+/* 只对第一颗球生效 */
+.urn-box:first-child::before{
+    content:"Signal:";
+    position:absolute;
+    top:180px;
+    right:calc(100% + 60px);
+    font-size:20px;
+    font-weight:400;
+}
+
+/* 仅选中第 1 颗球（.urn-box:first-child）中的质量文字 */
+.urn-box:first-child .label::before{
+    content:"Signal source:";
+    position:absolute;
+    right:calc(100% + 58px);   /* 站到质量文字左边，再留 10px 缝隙 */
+    top:0;                     /* 与质量文字垂直对齐，如需微调就改这里 */
+    font-size:20px;
+    font-weight:400;
+    white-space:nowrap;                /* 不允许自动换行 */
+    word-break:keep-all;
+}
+
+/* 未获知质量时用文字 */
+.label{
+    position:absolute;top:-50px;left:0;right:0;
+    font-size:20px;
+    font-weight:500;
+
+}
+
+/* ------ 问题排版 ------ */
+.question-row{display:flex;justify-content:space-between;gap:40px;margin-top:35px;}
+.question{flex:1;}
+
+.urn-caption{
+    font-size:16px;      /* 按需改成 12‒16 之间 */
+    line-height:1.2;     /* 行距紧凑一些 */
+}
+</style>
+
+<input type="hidden" id="timeSpent1" name="timeSpent1"/>
+
+{# ---------- JS: 计时与按钮控制 ---------- #}
+<script>
+let t=0,timer=-1,ready=false;
+window.onload=()=>{timer=setInterval(()=>{document.getElementById('timeSpent1').value=++t;if(t>=5){ready=true;check();}},1000);};
+
+function checked(name){return !!document.querySelector(`input[name="${name}"]:checked`);}
+function check(){
+    const ok=ready&&checked('send_decision');
+    const btn=document.getElementById('nextBtn');
+    btn.disabled=!ok;
+    btn.style.cursor=ok?'pointer':'not-allowed';
+    btn.style.backgroundColor=ok?'#007BFF':'grey';
+}
+</script>
+<br>
+<ul>
+ <li> This is the information you have received in this round. </li>
+</ul>
+<br>
+<br>
+<br>
+<br>
+{# ---------- 罐子示意图 ---------- #}
+<div class="urn-row">
+
+    {# ---- 自己 ---- #}
+    <div class="urn-box">
+        <span class="label"><b><i>{{ my_quality }}</i></b></span>
+        <img src="{% static 'IndividualDecision/signal.png' %}" class="urn-img" alt="signal">
+        <br>
+        <span style="{{ my_signal }}"></span>
+        <br>
+        <br>
+        <div class="urn-caption">You&nbsp;(ID:&nbsp;{{ my_id }})</div>
+    </div>
+
+    {# ---- 另外两名组员 ---- #}
+    {% for o in other_urns %}
+    <div class="urn-box">
+        {% if o.quality_label in "S W" %}
+            <span>{{ o.quality_label }}</span>
+        {% else %}
+            <span class="label">unknown</span>
+        {% endif %}
+
+        <img src="{% static 'IndividualDecision/signal.png' %}" class="urn-img" alt="signal">
+
+        <br>
+        <span style="{{ o.signal }}"></span>
+
+        <br>
+        <br>
+        <div class="urn-caption">
+            Group&nbsp;member&nbsp;(ID:&nbsp;{{ o.id }})
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+        <br>
+        <br>
+
+{# ---------- 表单 ---------- #}
+<form method="post">
+
+    <div class="question-row">
+
+        <div class="question">
+            <b>Whom will you <u>SEND</u> your signal source to?</b><br><br>
+            {% for opt in player.send_decision_choices %}
+                <input type="radio" class="radio-button"
+                       name="send_decision" value="{{ opt }}" onclick="check()">
+                <label class="choice-label">{{ opt }}</label><br>
+            {% endfor %}
+        </div>
+
+
+    </div>
+    <br>
+
+    <br>
+    <input type="submit" id="nextBtn" value="Next" class="next-page-button" disabled>
+</form>
+
+<br>
+<br>
+<hr style="border:2px solid grey;margin-top:25px;">
+<ul><li><i>This is where all group members got their balls. Please refer to the instructions for details.</i></li></ul>
+<div style="text-align:center;"><img src="{% static 'IndividualDecision/urnRB.png' %}" alt="Urns" width="50%"></div>
+
+
+
+{% endblock %}
+
+{# ---------------- 把 R/B 文本转成彩球图标 ---------------- #}
+{% block app_styles %}
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+    document.querySelectorAll(".choice-label").forEach(el=>{
+        el.innerHTML=el.innerHTML
+            .replace(/R/g,"<span style='display:inline-block;width:1em;height:1em;background:red;border-radius:50%;vertical-align:middle;margin:0 3px;'></span>")
+            .replace(/B/g,"<span style='display:inline-block;width:1em;height:1em;background:blue;border-radius:50%;vertical-align:middle;margin:0 3px;'></span>");
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,195 @@
+{% load static %}
+{% extends "global/Page.html" %}
+
+{% block title %}
+<div style="text-align: center;">
+    <h1>Round {{ player.round_number }}</h1>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ------ 罐子排版 ------ */
+.urn-row{display:flex;justify-content:center;gap:60px;margin-bottom:25px;}
+.urn-box{position:relative;width:150px;text-align:center;font-size:18px;}
+.urn-img{width:100%;max-width:120px;}
+
+
+/* 未获知质量时用文字 */
+.label{
+    position:absolute;top:-50px;left:0;right:0;
+    font-size:20px;
+    font-weight:500;
+
+}
+
+
+/* 只对第一颗球生效 */
+.urn-box:first-child::before{
+    content:"Signal:";
+    position:absolute;
+    top:180px;
+    right:calc(100% + 60px);
+    font-size:20px;
+    font-weight:400;
+}
+
+/* 仅选中第 1 颗球（.urn-box:first-child）中的质量文字 */
+.urn-box:first-child .label::before{
+    content:"Signal source:";
+    position:absolute;
+    right:calc(100% + 58px);   /* 站到质量文字左边，再留 10px 缝隙 */
+    top:0;                     /* 与质量文字垂直对齐，如需微调就改这里 */
+    font-size:20px;
+    font-weight:400;
+    white-space:nowrap;                /* 不允许自动换行 */
+    word-break:keep-all;
+}
+
+/* ------ 公共按钮 ------ */
+.next-page-button{
+    background:grey;color:#fff;border:none;padding:10px 20px;
+    cursor:not-allowed;border-radius:8px;
+}
+.radio-button{transform:scale(1.4);margin-right:8px;}
+
+
+.urn-caption{
+    font-size:16px;      /* 按需改成 12‒16 之间 */
+    line-height:1.2;     /* 行距紧凑一些 */
+}
+</style>
+
+<input type="hidden" id="timeSpent2" name="timeSpent2"/>
+
+<script>
+let t=0,timer=-1,ready=false;
+window.onload=()=>{timer=setInterval(()=>{document.getElementById('timeSpent2').value=++t;if(t>=5){ready=true;check();}},1000);};
+
+function checked(name){return !!document.querySelector(`input[name="${name}"]:checked`);}
+function check(){
+    const ok=ready&&checked('vote');
+    const btn=document.getElementById('nextBtn');
+    btn.disabled=!ok;
+    btn.style.cursor=ok?'pointer':'not-allowed';
+    btn.style.backgroundColor=ok?'#007BFF':'grey';
+}
+</script>
+
+
+    <div style="text-align: center;">
+        <h3>Please choose a state that you believe is the true state in this round </h3>
+    </div>
+    <br>
+    <br>
+    <br>
+<ul>
+ <li> This is the information you have received in this round. </li>
+</ul>
+    <br>
+    <br>
+    <br>
+    <br>
+{# ---------- 罐子排布 ---------- #}
+<div class="urn-row">
+
+{% for row in participants_info %}
+    <div class="urn-box">
+
+
+        {# 圆徽 / Unknown 标志（现在自己也显示 S/W） #}
+        {% if row.box_info == 'Unknown' %}
+            <span class="label">Unknown</span>
+        {% else %}
+            {% if row.box_info == 'strong source' %}
+                <span class="label"><b><i>strong source</i></b></span>
+            {% else %}
+                <span class="label"><b><i>weak source</i></b></span>
+            {% endif %}
+        {% endif %}
+
+
+
+        {# ------- 罐子图片：根据 signal 决定 red / blue ------- #}
+        {% if 'background-color:red' in row.player_signal_style %}
+            <img src="{% static 'IndividualDecision/signal.png' %}" class="urn-img" alt="urn">
+        {% else %}
+            <img src="{% static 'IndividualDecision/signal.png' %}" class="urn-img" alt="urn">
+        {% endif %}
+
+
+
+        <span style="{{ row.player_signal_style }}"></span>
+
+        <br>
+        <br>
+        {# 文字说明 #}
+        <div class="urn-caption">
+            {% if row.is_self %}
+                You&nbsp;(ID:&nbsp;{{ row.id_in_group }})
+            {% else %}
+                Group&nbsp;member&nbsp;(ID:&nbsp;{{ row.id_in_group }})
+            {% endif %}
+        </div>
+
+    </div>
+{% endfor %}
+
+</div>
+
+
+<br>
+<br>
+
+Please guess the true state based on the information you have received above?
+
+<br>
+<br>
+
+
+
+{# ---------- 投票表单 ---------- #}
+<form method="post">
+  <div id="voteContainer" style="text-align:left;font-size:20px;">
+      <div class="vote-option">
+          <input type="radio" class="radio-button" name="vote"
+                 id="voteR" value="R" onchange="check()">
+          <label for="voteR"><span style="color:red;font-weight:bold;">RED</span></label>
+      </div>
+
+      <div class="vote-option">
+          <input type="radio" class="radio-button" name="vote"
+                 id="voteB" value="B" onchange="check()">
+          <label for="voteB"><span style="color:blue;font-weight:bold;">BLUE</span></label>
+      </div>
+  </div>
+
+  <br>
+  <input type="submit" id="nextBtn" value="Next"
+         class="next-page-button" disabled>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const box = document.getElementById('voteContainer');
+    /* 如果随机数 < 0.5 就把 BLUE 挪到上面 */
+    if (Math.random() < 0.5) {
+        box.insertBefore(box.children[1], box.children[0]);
+    }
+});
+</script>
+
+
+
+
+
+<br>
+<br>
+<hr style="border:2px solid grey;margin-top:25px;">
+<ul><li><i>This is where all group members got their balls. Please refer to the instructions for details.</i></li></ul>
+<div style="text-align:center;"><img src="{% static 'IndividualDecision/urnRB.png' %}" alt="Urns" width="50%"></div>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+{% load static %}
+{% extends "global/Page.html" %}
+
+{% block title %}
+<div style="text-align: center;">
+    <h1>Round {{ player.round_number }}</h1>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ------ 罐子排版 ------ */
+.urn-row{display:flex;justify-content:center;gap:60px;margin-bottom:25px;}
+.urn-box{position:relative;width:150px;text-align:center;font-size:18px;}
+.urn-img{width:100%;max-width:120px;}
+
+/* 圆徽：S / W */
+.badge{
+    position:absolute;
+    top:-50px;                      /* 根据图片高度可微调 -32 / -36 */
+    left:50%;transform:translateX(-50%);
+    width:30px;height:30px;
+    border:2px solid #000;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font:400 20px/1 "Arial",sans-serif;
+    color:#000 !important;
+    background:#fff !important;
+    z-index:9999 !important;
+}
+
+/* 未获知质量时用文字 */
+.unknown-label{
+    position:absolute;top:-50px;left:0;right:0;
+    font-size:16px;
+    font-weight:500;
+
+}
+
+
+/* ------ 公共按钮 ------ */
+.next-page-button{
+    background:grey;color:#fff;border:none;padding:10px 20px;
+    cursor:not-allowed;border-radius:8px;
+}
+.radio-button{transform:scale(1.4);margin-right:8px;}
+
+
+.urn-caption{
+    font-size:16px;      /* 按需改成 12‒16 之间 */
+    line-height:1.2;     /* 行距紧凑一些 */
+}
+</style>
+
+<input type="hidden" id="timeSpent2" name="timeSpent2"/>
+
+<script>
+let t=0,timer=-1,ready=false;
+window.onload=()=>{timer=setInterval(()=>{document.getElementById('timeSpent2').value=++t;if(t>=5){ready=true;check();}},1000);};
+
+function checked(name){return !!document.querySelector(`input[name="${name}"]:checked`);}
+function check(){
+    const ok=ready&&checked('vote');
+    const btn=document.getElementById('nextBtn');
+    btn.disabled=!ok;
+    btn.style.cursor=ok?'pointer':'not-allowed';
+    btn.style.backgroundColor=ok?'#007BFF':'grey';
+}
+</script>
+
+
+    <div style="text-align: center;">
+        <h3>Please choose a state that you believe is the occurred state in this round </h3>
+    </div>
+    <br>
+    <br>
+    <br>
+<ul>
+ <li> This is the information you have received in this round. </li>
+</ul>
+    <br>
+    <br>
+    <br>
+    <br>
+{# ---------- 罐子排布 ---------- #}
+<div class="urn-row">
+
+{% for row in participants_info %}
+    <div class="urn-box">
+
+
+        {# 圆徽 / Unknown 标志（现在自己也显示 S/W） #}
+        {% if row.box_info == 'Unknown' %}
+            <span class="unknown-label">Unknown&nbsp;jar</span>
+        {% else %}
+            {% if row.box_info == 'Box A' %}
+                <span class="badge">S</span>
+            {% else %}
+                <span class="badge">W</span>
+            {% endif %}
+        {% endif %}
+
+
+
+        {# ------- 罐子图片：根据 signal 决定 red / blue ------- #}
+        {% if 'background-color:red' in row.player_signal_style %}
+            <img src="{% static 'IndividualDecision/red_urn.png' %}" class="urn-img" alt="urn">
+        {% else %}
+            <img src="{% static 'IndividualDecision/blue_urn.png' %}" class="urn-img" alt="urn">
+        {% endif %}
+
+
+
+        {# 文字说明 #}
+        <div class="urn-caption">
+            {% if row.is_self %}
+                You&nbsp;(ID:&nbsp;{{ row.id_in_group }})
+            {% else %}
+                Group&nbsp;member&nbsp;(ID:&nbsp;{{ row.id_in_group }})
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+
+</div>
+
+
+<br>
+<br>
+
+Please guess the occurred state based on the information you have received above?
+
+<br>
+<br>
+
+{# ---------- 投票表单 ---------- #}
+<form method="post">
+    <div style="text-align:left;font-size:20px;">
+        <input type="radio" class="radio-button" name="vote" id="voteR" value="R" onchange="updateBtn()">
+        <label for="voteR"><span style="color:red;font-weight:bold;">RED</span></label>&nbsp;&nbsp;&nbsp;
+<br>
+        <input type="radio" class="radio-button" name="vote" id="voteB" value="B" onchange="updateBtn()">
+        <label for="voteB"><span style="color:blue;font-weight:bold;">BLUE</span></label>
+    </div>
+    <br>
+    <input type="submit" id="nextBtn" value="Next" class="next-page-button" disabled>
+
+</form>
+
+<br>
+<br>
+<hr style="border:2px solid grey;margin-top:25px;">
+<ul><li><i>This is where all group members got their balls. Please refer to the instructions for details.</i></li></ul>
+<div style="text-align:center;"><img src="{% static 'IndividualDecision/urnRB.png' %}" alt="Urns" width="50%"></div>
+
+{% endblock %}
